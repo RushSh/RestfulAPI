@@ -79,5 +79,10 @@ namespace RestfulAPI
                 SfSkinManager.ApplyStylesOnApplication = false;
             }
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

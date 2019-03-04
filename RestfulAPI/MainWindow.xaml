@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525" Icon="App.ico">
     <Grid>
-        
+        <Button x:Name="btn_CallRestEndpoint" Content="Call REST Endpoint" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="118" Click="Button_Click"/>
+        <TextBox x:Name="txt_RESTURL" Text="Enter REST URL" Opacity="0.3" HorizontalAlignment="Left" Height="20" Margin="133,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="374"/>
     </Grid>
 </Window>
