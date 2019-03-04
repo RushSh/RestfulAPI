@@ -82,7 +82,18 @@ namespace RestfulAPI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            RestAPIHandler newApiHandler = new RestAPIHandler();
+            Array results = newApiHandler.Invoke_REST("None", "GET", this.txt_RESTURL.Text);
+            foreach(var result in results)
+            {
+                this.tree_Result_Content.Items.Add(result.ToString());
+            }
+        }
+
+        private void ComboBoxAdv_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
         }
+
     }
 }

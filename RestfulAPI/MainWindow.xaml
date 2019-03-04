@@ -1,9 +1,31 @@
-<Window x:Class="RestfulAPI.MainWindow"
+<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="RestfulAPI.MainWindow"
         Title="MainWindow" Height="350" Width="525" Icon="App.ico">
     <Grid>
-        <Button x:Name="btn_CallRestEndpoint" Content="Call REST Endpoint" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="118" Click="Button_Click"/>
-        <TextBox x:Name="txt_RESTURL" Text="Enter REST URL" Opacity="0.3" HorizontalAlignment="Left" Height="20" Margin="133,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="374"/>
+        <Button x:Name="btn_CallRestEndpoint" Content="Call REST Endpoint" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="118" Click="Button_Click" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <TextBox x:Name="txt_RESTURL" Text="Enter REST URL" Opacity="0.3" HorizontalAlignment="Left" Height="20" Margin="10,65,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="110"/>
+        <syncfusion:ComboBoxAdv x:Name="comboBoxAdv" HorizontalAlignment="Left" Height="25" Margin="10,35,0,0" VerticalAlignment="Top" Width="118" SelectedIndex="0" SelectionChanged="ComboBoxAdv_SelectionChanged">
+            <ComboBoxItem/>
+        </syncfusion:ComboBoxAdv>
+        <TabControl Margin="133,10,10,10" Name="tbControl_Rest_Result">
+            <TabItem  Name="tb_Result_Content" Header="Result Content" Background="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <TreeView HorizontalAlignment="Left" Name="tree_Result_Content" Height="250" Margin="3,10,50,50" VerticalAlignment="Top" Width="347"/>
+            </TabItem>
+            <TabItem  Name="tb_Result_Header" Header="Result Header" Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
+                <TreeView HorizontalAlignment="Left" Name="tree_Result_Headers" Height="250" Margin="3,10,50,50" VerticalAlignment="Top" Width="347"/>
+            </TabItem>
+        </TabControl>
+
     </Grid>
 </Window>
