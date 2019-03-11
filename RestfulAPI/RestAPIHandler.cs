@@ -5,28 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
 using RestSharp.Authenticators;
+using Newtonsoft.Json.Linq;
 
 namespace RestfulAPI
 {
-    class RestAPIHandler
+   public class RestAPIHandler
     {
 
-        public Array Invoke_REST(string AuthenticationType, String requestType, string restURL)
+        public  string responseContent;
+        public IList<RestSharp.Parameter> responseHeader;        
+
+        public void Invoke_REST(string AuthenticationType, String requestType, string restURL)
         {
             if(AuthenticationType == "None" && requestType == "GET")
             {
-               var result = GET_Request(restURL);
-                return result ;
+                GET_Request(restURL);
             }
-
-            return null;
         }
-        public Array GET_Request(string url)
+        public void GET_Request(string url)
         {
-            var client = new RestClient("https://jsonplaceholder.typicode.com/");
+            var client = new RestClient(url);
             var request = new RestRequest(url, DataFormat.Json);
             var response = client.Get(request);
-            return response.Headers.ToArray();
+
+            responseContent = response.Content;
+            responseHeader = response.Headers;
            
         }
     }

@@ -19,6 +19,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Syncfusion.SfSkinManager;
+using System.Net;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace RestfulAPI
 {
@@ -29,6 +34,8 @@ namespace RestfulAPI
     {
 		#region Fields
         private string currentVisualStyle;
+        public RestAPIHandler restApiHandler = new RestAPIHandler();
+        public event EventHandler UpdateEvents;
         #endregion
 
         #region Properties
@@ -82,18 +89,114 @@ namespace RestfulAPI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            RestAPIHandler newApiHandler = new RestAPIHandler();
-            Array results = newApiHandler.Invoke_REST("None", "GET", this.txt_RESTURL.Text);
-            foreach(var result in results)
+
+            restApiHandler.Invoke_REST("None", "GET", this.txt_RESTURL.Text);
+            JToken jToken = JToken.Parse(restApiHandler.responseContent);
+            JsonParser(this.tree_Result_Content, JToken.Parse(restApiHandler.responseContent));
+          /*  foreach (var item in restApiHandler.responseHeader)
             {
-                this.tree_Result_Content.Items.Add(result.ToString());
-            }
+                this.tree_Result_Headers.Items.Add(item);
+            } */
+           
         }
 
+        private void JsonParser(TreeView treeView, JToken jtoken)
+        {
+            TreeViewItem emptyCollection = new TreeViewItem();
+            Stack<IndexContainer> s = new Stack<IndexContainer>();
+            s.Push(new IndexContainer());
+            emptyCollection.Header = "ROOT";
+            treeView.Items.Add(nodeBuilder(emptyCollection, jtoken, s));
+            s.Pop();
+
+        }
+
+        private TreeViewItem nodeBuilder(TreeViewItem item, JToken jToken, Stack<IndexContainer> s)
+        {
+            if (jToken.Type == JTokenType.Array)
+            {
+                if (jToken.Parent != null)
+                {
+                    if (jToken.Parent.Type == JTokenType.Property)
+                    {
+                        item.Header = ($"{((JProperty)jToken.Parent).Name} <{jToken.Type.ToString()}>");
+                    }
+                    else
+                    {
+                        item.Header = ($"[{s.Peek().Inc()}] <{jToken.Type.ToString()}>");
+                    }
+                }
+                s.Push(new IndexContainer());
+                foreach (var p in jToken)
+                {
+                    nodeBuilder(item, p, s);
+                }
+                s.Pop();
+
+            }
+            else if (jToken.Type == JTokenType.Object)
+            {
+                if (jToken.Parent != null)
+                {
+                    if (jToken.Parent.Type == JTokenType.Property)
+                    {
+                        item.Header = String.Format("[{0}] items", jToken.Path);
+                    }
+                    else
+                    {
+                        item.Header = ($"[{s.Peek().Inc()}] <{jToken.Type.ToString()}>");
+                    }
+                }
+                    s.Push(new IndexContainer());
+                    foreach (var p in jToken.Children<JProperty>())
+                    {
+                        nodeBuilder(item, p.Value, s);
+                    }
+                    s.Pop();
+            }
+            else
+            {
+                var value = JsonConvert.SerializeObject(((JValue)jToken).Value);
+                var name = string.Empty;
+
+                if (jToken.Parent.Type == JTokenType.Property)
+                {
+                    name = $"{((JProperty)jToken.Parent).Name} : {value}";
+                }
+                else
+                {
+                    name = $"[{s.Peek().Inc()}] : {value}";
+                }
+                item.Items.Add(name);
+
+            }
+
+            return item;
+        }
         private void ComboBoxAdv_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
 
+        private void Tree_Result_Content_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnTreeViewEvents(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnUpdateEvents(object sender, TextCompositionEventArgs e)
+        {
+
+        }
+
+        private sealed class IndexContainer
+        {
+            public int _n;
+            public int Inc() => _n++;
+        }
     }
 }
